@@ -1,5 +1,6 @@
 #ifndef RTG_INTERFACE_H
 #define RTG_INTERFACE_H
+#include <stdbool.h>
 
 struct rtg_enable_data {
     int enable;
@@ -59,6 +60,11 @@ enum rtg_sched_cmdid {
     RTG_CTRL_MAX_NR,
 };
 
+#define SYSTEM_UID 1000
+#define ROOT_UID 0
+
+#define AF_RTG_ALL 0x7fff
+#define AF_RTG_NORMAL_TASK_FULL 0x5fff
 
 int EnableRtg(bool flag);
 int AuthEnable(unsigned int uid, unsigned int ua_flag, unsigned int status);

@@ -1,0 +1,72 @@
+[
+    {
+        "arguments": [
+            "clang-12",
+            "-c",
+            "-std=c11",
+            "-O1",
+            "-pthread",
+            "-o",
+            "qos_test",
+            "qos_test.c"
+        ],
+        "directory": "/home/ruty/ext/qos_interface",
+        "file": "qos_test.c"
+    },
+    {
+        "arguments": [
+            "clang-12",
+            "-c",
+            "-std=c11",
+            "-O1",
+            "-pthread",
+            "-o",
+            "qos_test",
+            "concurrency_test.c"
+        ],
+        "directory": "/home/ruty/ext/qos_interface",
+        "file": "concurrency_test.c"
+    },
+    {
+        "arguments": [
+            "clang-12",
+            "-c",
+            "-std=c11",
+            "-O1",
+            "-pthread",
+            "-o",
+            "qos_test",
+            "qos_interface.c"
+        ],
+        "directory": "/home/ruty/ext/qos_interface",
+        "file": "qos_interface.c"
+    },
+    {
+        "arguments": [
+            "clang-12",
+            "-c",
+            "-std=c11",
+            "-O1",
+            "-pthread",
+            "-o",
+            "qos_test",
+            "main.c"
+        ],
+        "directory": "/home/ruty/ext/qos_interface",
+        "file": "main.c"
+    },
+    {
+        "arguments": [
+            "clang-12",
+            "-c",
+            "-std=c11",
+            "-O1",
+            "-pthread",
+            "-o",
+            "qos_test",
+            "auth_test.c"
+        ],
+        "directory": "/home/ruty/ext/qos_interface",
+        "file": "auth_test.c"
+    }
+]
