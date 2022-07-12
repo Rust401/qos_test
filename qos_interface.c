@@ -4,6 +4,7 @@
 #include <sys/ioctl.h>
 #include <linux/types.h>
 #include <fcntl.h>
+#include <stdbool.h>
 
 #include "qos_interface.h"
 
@@ -85,7 +86,7 @@ int AuthDelete(unsigned int uid)
 
 	ret = ioctl(fd, CMD_ID_AUTH_MANIPULATE, &data);
 	if (ret < 0)
-		printf("auth enable failed for uid %d\n", uid);
+		printf("auth delete failed for uid %d\n", uid);
 
 	close(fd);
 	return ret;
