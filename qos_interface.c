@@ -8,21 +8,32 @@
 
 #include "qos_interface.h"
 
-const char RTG_SCHED_IPC_MAGIC = 0xAB;
-
-#define CMD_ID_SET_ENABLE \
-    _IOWR(RTG_SCHED_IPC_MAGIC, SET_ENABLE, struct rtg_enable_data)
-#define CMD_ID_AUTH_MANIPULATE \
-    _IOWR(RTG_SCHED_IPC_MAGIC, AUTH_MANIPULATE, struct rtg_auth_data)
-#define CMD_ID_QOS_MANIPULATE \
-    _IOWR(RTG_SCHED_IPC_MAGIC, QOS_MANIPULATE, struct rtg_qos_data)
-
 static int trival_open_rtg_node()
 {
 	char fileName[] = "/proc/self/sched_rtg_ctrl";
 	int fd = open(fileName, O_RDWR);
 	if (fd < 0)
 		printf("task %d belong to user %d open rtg node failed\n", getpid(), getuid());
+
+	return fd;
+}
+
+static int trival_open_auth_ctrl_node()
+{
+	char fileName[] = "/dev/auth_ctrl";
+	int fd = open(fileName, O_RDWR);
+	if (fd < 0)
+		printf("task %d belong to user %d open auth node failed\n", getpid(), getuid());
+
+	return fd;
+}
+
+static int trival_open_qos_ctrl_node()
+{
+	char fileName[] = "/proc/thread-self/sched_qos_ctrl";
+	int fd = open(fileName, O_RDWR);
+	if (fd < 0)
+		printf("task %d belong to user %d open qos node failed\n", getpid(), getuid());
 
 	return fd;
 }
@@ -53,16 +64,17 @@ int AuthEnable(unsigned int uid, unsigned int ua_flag, unsigned int status)
 	int fd;
 	int ret;
 
-	fd = trival_open_rtg_node();
+	fd = trival_open_auth_ctrl_node();
 	if (fd < 0)
 		return fd;
 
 	data.uid = uid;
 	data.ua_flag = ua_flag;
+	data.qos_ua_flag = AF_QOS_ALL;
 	data.status = status;
 	data.type = AUTH_ENABLE;
 
-	ret = ioctl(fd, CMD_ID_AUTH_MANIPULATE, &data);
+	ret = ioctl(fd, AUTH_CTRL_RTG_OPERATION, &data);
 	if (ret < 0)
 		printf("auth enable failed for uid %d with status %d\n", uid, status);
 
@@ -76,7 +88,7 @@ int AuthDelete(unsigned int uid)
 	int fd;
 	int ret;
 
-	fd = trival_open_rtg_node();
+	fd = trival_open_auth_ctrl_node();
 	if (fd < 0) {
 		return fd;
 	}
@@ -84,7 +96,7 @@ int AuthDelete(unsigned int uid)
 	data.uid = uid;
 	data.type = AUTH_DELETE;
 
-	ret = ioctl(fd, CMD_ID_AUTH_MANIPULATE, &data);
+	ret = ioctl(fd, AUTH_CTRL_RTG_OPERATION, &data);
 	if (ret < 0)
 		printf("auth delete failed for uid %d\n", uid);
 
@@ -98,7 +110,7 @@ int AuthPause(unsigned int uid)
 	int fd;
 	int ret;
 
-	fd = trival_open_rtg_node();
+	fd = trival_open_auth_ctrl_node();
 	if (fd < 0) {
 		return fd;
 	}
@@ -106,7 +118,7 @@ int AuthPause(unsigned int uid)
 	data.uid = uid;
 	data.type = AUTH_PAUSE;
 
-	ret = ioctl(fd, CMD_ID_AUTH_MANIPULATE, &data);
+	ret = ioctl(fd, AUTH_CTRL_RTG_OPERATION, &data);
 	if (ret < 0)
 		printf("auth pause failed for uid %d\n", uid);
 
@@ -120,7 +132,7 @@ int AuthGet(unsigned int uid, unsigned int *ua_flag, unsigned int *status)
 	int fd;
 	int ret;
 
-	fd = trival_open_rtg_node();
+	fd = trival_open_auth_ctrl_node();
 	if (fd < 0) {
 		return fd;
 	}
@@ -128,7 +140,7 @@ int AuthGet(unsigned int uid, unsigned int *ua_flag, unsigned int *status)
 	data.uid = uid;
 	data.type = AUTH_GET;
 
-	ret = ioctl(fd, CMD_ID_AUTH_MANIPULATE, &data);
+	ret = ioctl(fd, AUTH_CTRL_RTG_OPERATION, &data);
 	if (ret < 0)
 		printf("auth get failed for uid %d\n", uid);
 
@@ -146,7 +158,7 @@ int QosApply(unsigned int level)
 	int fd;
 	int ret;
 
-	fd = trival_open_rtg_node();
+	fd = trival_open_qos_ctrl_node();
 	if (fd < 0) {
 		return fd;
 	}
@@ -154,7 +166,7 @@ int QosApply(unsigned int level)
 	data.level = level;
 	data.type = 1;
 
-	ret = ioctl(fd, CMD_ID_QOS_MANIPULATE, &data);
+	ret = ioctl(fd, QOS_CTRL_BASIC_OPERATION, &data);
 	if (ret < 0)
 		printf("qos apply failed for task %d\n", getpid());
 
@@ -168,16 +180,34 @@ int QosLeave()
 	int fd;
 	int ret;
 
-	fd = trival_open_rtg_node();
+	fd = trival_open_qos_ctrl_node();
 	if (fd < 0) {
 		return fd;
 	}
 
 	data.type = 2;
 
-	ret = ioctl(fd, CMD_ID_QOS_MANIPULATE, &data);
+	ret = ioctl(fd, QOS_CTRL_BASIC_OPERATION, &data);
 	if (ret < 0)
 		printf("qos leave failed for task %d\n", getpid());
+
+	close(fd);
+	return ret;
+}
+
+int QosPolicy(struct qos_policy_datas *policy_datas)
+{
+	int fd;
+	int ret;
+
+	fd = trival_open_qos_ctrl_node();
+	if (fd < 0) {
+		return fd;
+	}
+
+	ret = ioctl(fd, QOS_CTRL_BASIC_OPERATION, policy_datas);
+	if (ret < 0)
+		printf("set qos policy failed for task %d\n", getpid());
 
 	close(fd);
 	return ret;

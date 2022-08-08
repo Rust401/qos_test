@@ -1,19 +1,22 @@
-#ifndef RTG_INTERFACE_H
-#define RTG_INTERFACE_H
+#ifndef QOS_INTERFACE_H
+#define QOS_INTERFACE_H
 #include <stdbool.h>
 
-struct rtg_enable_data {
-    int enable;
-    int len;
-    char *data;
-};
+/*
+ * generic
+ */
+#define SYSTEM_UID 1000
+#define ROOT_UID 0
 
-enum grp_ctrl_cmd {
-    CMD_CREATE_RTG_GRP,
-    CMD_ADD_RTG_THREAD,
-    CMD_REMOVE_RTG_THREAD,
-    CMD_CLEAR_RTG_GRP,
-    CMD_DESTROY_RTG_GRP
+/*
+ * auth_ctrl
+ */
+struct rtg_auth_data {
+	unsigned int uid;
+	unsigned int type;
+	unsigned int ua_flag;
+	unsigned int qos_ua_flag;
+	unsigned int status;
 };
 
 enum auth_manipulate_type {
@@ -27,18 +30,72 @@ enum auth_manipulate_type {
 enum rtg_auth_status {
 	AUTH_STATUS_CACHED = 0,
 	AUTH_STATUS_ENABLE,
+	AUTH_STATUS_DEAD,
 };
 
-struct rtg_auth_data {
-    unsigned int uid;
-    unsigned int type;
-    unsigned int ua_flag;
-    unsigned int status;
+enum auth_ctrl_cmdid {
+	RTG_AUTH = 1,
+	AUTH_CTRL_MAX_NR
+};
+
+#define AUTH_CTRL_IPC_MAGIG	0xCD
+
+#define	AUTH_CTRL_RTG_OPERATION \
+	_IOWR(AUTH_CTRL_IPC_MAGIG, RTG_AUTH, struct rtg_auth_data)
+
+
+/*
+ * qos ctrl
+ */
+#define NR_QOS 5
+#define RTG_QOS_NUM_MAX 10
+
+#define AF_QOS_ALL		0x0003
+#define AF_QOS_DELEGATED	0x0001
+
+enum qos_manipulate_type {
+	QOS_APPLY = 1,
+	QOS_LEAVE,
+	QOS_MAX_NR,
 };
 
 struct rtg_qos_data {
-    unsigned int type;
-    unsigned int level;
+	unsigned int type;
+	unsigned int level;
+};
+
+struct qos_policy_data {
+	int nice;
+	int latency_nice;
+};
+
+struct qos_policy_datas {
+	struct qos_policy_data policys[NR_QOS + 1];
+};
+
+enum qos_ctrl_cmdid {
+	QOS_CTRL = 1,
+	QOS_POLICY,
+	QOS_CTRL_MAX_NR
+};
+
+#define QOS_CTRL_IPC_MAGIG	0xCC
+
+#define QOS_CTRL_BASIC_OPERATION \
+	_IOWR(QOS_CTRL_IPC_MAGIG, QOS_CTRL, struct rtg_qos_data)
+#define QOS_CTRL_POLICY_OPERATION \
+	_IOWR(QOS_CTRL_IPC_MAGIG, QOS_POLICY, struct qos_policy_datas)
+
+/*
+ * RTG
+ */
+#define AF_RTG_ALL		0x1fff
+#define AF_RTG_DELEGATED	0x1fff
+
+struct rtg_enable_data {
+    int enable;
+    int len;
+    char *data;
 };
 
 enum rtg_sched_cmdid {
@@ -55,17 +112,17 @@ enum rtg_sched_cmdid {
     LIST_RTG_THREAD,
     SEARCH_RTG,
     GET_ENABLE,
-    AUTH_MANIPULATE,
-    QOS_MANIPULATE = 15,
     RTG_CTRL_MAX_NR,
 };
 
-#define SYSTEM_UID 1000
-#define ROOT_UID 0
+#define RTG_SCHED_IPC_MAGIC	0xAB
 
-#define AF_RTG_ALL 0x7fff
-#define AF_RTG_NORMAL_TASK_FULL 0x5fff
+#define CMD_ID_SET_ENABLE \
+    _IOWR(RTG_SCHED_IPC_MAGIC, SET_ENABLE, struct rtg_enable_data)
 
+/*
+ * interface
+ */
 int EnableRtg(bool flag);
 int AuthEnable(unsigned int uid, unsigned int ua_flag, unsigned int status);
 int AuthPause(unsigned int uid);
@@ -73,5 +130,6 @@ int AuthDelete(unsigned int uid);
 int AuthGet(unsigned int uid, unsigned int *ua_flag, unsigned int *status);
 int QosApply(unsigned int level);
 int QosLeave();
+int QosPolicy(struct qos_policy_datas *policy_datas);
 
-#endif /* RTG_INTERFACE_H */
+#endif /* OQS_INTERFACE_H */

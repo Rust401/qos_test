@@ -123,7 +123,7 @@ out:
 
 static inline bool value_changed(unsigned int cur_ua_flag, unsigned cur_status)
 {
-	return cur_ua_flag != AF_RTG_NORMAL_TASK_FULL ||
+	return cur_ua_flag != AF_RTG_DELEGATED ||
 	       cur_status != AUTH_STATUS_ENABLE;
 }
 

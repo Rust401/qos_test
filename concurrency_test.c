@@ -174,7 +174,7 @@ static void test_multithread_app() {
 
 void test_concurrency()
 {
-	printf("0X02: start CONCURRENCY_TEST\n");
+	printf("0X03: start CONCURRENCY_TEST\n");
 	test_multithread_app();
 	printf("finish CONCURRENCY_TEST!\n");
 	printf("\n");
