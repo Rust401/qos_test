@@ -60,7 +60,7 @@ int EnableRtg(bool flag)
 
 int AuthEnable(unsigned int uid, unsigned int ua_flag, unsigned int status)
 {
-	struct rtg_auth_data data;
+	struct auth_ctrl_data data;
 	int fd;
 	int ret;
 
@@ -69,12 +69,12 @@ int AuthEnable(unsigned int uid, unsigned int ua_flag, unsigned int status)
 		return fd;
 
 	data.uid = uid;
-	data.ua_flag = ua_flag;
+	data.rtg_ua_flag = ua_flag;
 	data.qos_ua_flag = AF_QOS_ALL;
 	data.status = status;
 	data.type = AUTH_ENABLE;
 
-	ret = ioctl(fd, AUTH_CTRL_RTG_OPERATION, &data);
+	ret = ioctl(fd, BASIC_AUTH_CTRL_OPERATION, &data);
 	if (ret < 0)
 		printf("auth enable failed for uid %d with status %d\n", uid, status);
 
@@ -84,7 +84,7 @@ int AuthEnable(unsigned int uid, unsigned int ua_flag, unsigned int status)
 
 int AuthDelete(unsigned int uid)
 {
-	struct rtg_auth_data data;
+	struct auth_ctrl_data data;
 	int fd;
 	int ret;
 
@@ -96,7 +96,7 @@ int AuthDelete(unsigned int uid)
 	data.uid = uid;
 	data.type = AUTH_DELETE;
 
-	ret = ioctl(fd, AUTH_CTRL_RTG_OPERATION, &data);
+	ret = ioctl(fd, BASIC_AUTH_CTRL_OPERATION, &data);
 	if (ret < 0)
 		printf("auth delete failed for uid %d\n", uid);
 
@@ -106,7 +106,7 @@ int AuthDelete(unsigned int uid)
 
 int AuthPause(unsigned int uid)
 {
-	struct rtg_auth_data data;
+	struct auth_ctrl_data data;
 	int fd;
 	int ret;
 
@@ -118,7 +118,7 @@ int AuthPause(unsigned int uid)
 	data.uid = uid;
 	data.type = AUTH_PAUSE;
 
-	ret = ioctl(fd, AUTH_CTRL_RTG_OPERATION, &data);
+	ret = ioctl(fd, BASIC_AUTH_CTRL_OPERATION, &data);
 	if (ret < 0)
 		printf("auth pause failed for uid %d\n", uid);
 
@@ -128,7 +128,7 @@ int AuthPause(unsigned int uid)
 
 int AuthGet(unsigned int uid, unsigned int *ua_flag, unsigned int *status)
 {
-	struct rtg_auth_data data;
+	struct auth_ctrl_data data;
 	int fd;
 	int ret;
 
@@ -140,13 +140,13 @@ int AuthGet(unsigned int uid, unsigned int *ua_flag, unsigned int *status)
 	data.uid = uid;
 	data.type = AUTH_GET;
 
-	ret = ioctl(fd, AUTH_CTRL_RTG_OPERATION, &data);
+	ret = ioctl(fd, BASIC_AUTH_CTRL_OPERATION, &data);
 	if (ret < 0)
 		printf("auth get failed for uid %d\n", uid);
 
 	close(fd);
 
-	*ua_flag = data.ua_flag;
+	*ua_flag = data.rtg_ua_flag;
 	*status = data.status;
 
 	return ret;
@@ -154,7 +154,7 @@ int AuthGet(unsigned int uid, unsigned int *ua_flag, unsigned int *status)
 
 int QosApply(unsigned int level)
 {
-	struct rtg_qos_data data;
+	struct qos_ctrl_data data;
 	int fd;
 	int ret;
 
@@ -176,7 +176,7 @@ int QosApply(unsigned int level)
 
 int QosLeave()
 {
-	struct rtg_qos_data data;
+	struct qos_ctrl_data data;
 	int fd;
 	int ret;
 

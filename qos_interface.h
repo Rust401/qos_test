@@ -11,10 +11,10 @@
 /*
  * auth_ctrl
  */
-struct rtg_auth_data {
+struct auth_ctrl_data {
 	unsigned int uid;
 	unsigned int type;
-	unsigned int ua_flag;
+	unsigned int rtg_ua_flag;
 	unsigned int qos_ua_flag;
 	unsigned int status;
 };
@@ -34,14 +34,14 @@ enum rtg_auth_status {
 };
 
 enum auth_ctrl_cmdid {
-	RTG_AUTH = 1,
+	BASIC_AUTH_CTRL = 1,
 	AUTH_CTRL_MAX_NR
 };
 
 #define AUTH_CTRL_IPC_MAGIG	0xCD
 
-#define	AUTH_CTRL_RTG_OPERATION \
-	_IOWR(AUTH_CTRL_IPC_MAGIG, RTG_AUTH, struct rtg_auth_data)
+#define	BASIC_AUTH_CTRL_OPERATION \
+	_IOWR(AUTH_CTRL_IPC_MAGIG, BASIC_AUTH_CTRL, struct auth_ctrl_data)
 
 
 /*
@@ -59,7 +59,7 @@ enum qos_manipulate_type {
 	QOS_MAX_NR,
 };
 
-struct rtg_qos_data {
+struct qos_ctrl_data {
 	unsigned int type;
 	unsigned int level;
 };
@@ -82,7 +82,7 @@ enum qos_ctrl_cmdid {
 #define QOS_CTRL_IPC_MAGIG	0xCC
 
 #define QOS_CTRL_BASIC_OPERATION \
-	_IOWR(QOS_CTRL_IPC_MAGIG, QOS_CTRL, struct rtg_qos_data)
+	_IOWR(QOS_CTRL_IPC_MAGIG, QOS_CTRL, struct qos_ctrl_data)
 #define QOS_CTRL_POLICY_OPERATION \
 	_IOWR(QOS_CTRL_IPC_MAGIG, QOS_POLICY, struct qos_policy_datas)
 
