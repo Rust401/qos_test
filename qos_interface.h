@@ -27,9 +27,11 @@ enum auth_manipulate_type {
 	AUTH_MAX_NR,
 };
 
-enum rtg_auth_status {
-	AUTH_STATUS_CACHED = 0,
-	AUTH_STATUS_ENABLE,
+enum auth_status {
+	AUTH_STATUS_DISABLED = 1,
+	AUTH_STATUS_FOREGROUND,
+	AUTH_STATUS_BACKGROUND,
+	AUTH_STATUS_SYSTEM_SERVER,
 	AUTH_STATUS_DEAD,
 };
 
@@ -48,7 +50,7 @@ enum auth_ctrl_cmdid {
  * qos ctrl
  */
 #define NR_QOS 5
-#define RTG_QOS_NUM_MAX 10
+#define QOS_NUM_MAX 10
 
 #define AF_QOS_ALL		0x0003
 #define AF_QOS_DELEGATED	0x0001
@@ -60,6 +62,7 @@ enum qos_manipulate_type {
 };
 
 struct qos_ctrl_data {
+	int pid;
 	unsigned int type;
 	unsigned int level;
 };
@@ -67,9 +70,20 @@ struct qos_ctrl_data {
 struct qos_policy_data {
 	int nice;
 	int latency_nice;
+	int uclamp_min;
+	int uclamp_max;
+};
+
+enum qos_policy_type {
+	QOS_POLICY_DEFAULT = 1,
+	QOS_POLICY_FRONT,
+	QOS_POLICY_BACK,
+	QOS_POLICY_SYSTEM_SERVER,
+	QOS_POLICY_MAX_NR,
 };
 
 struct qos_policy_datas {
+	int policy_type;
 	struct qos_policy_data policys[NR_QOS + 1];
 };
 
@@ -129,6 +143,7 @@ int AuthPause(unsigned int uid);
 int AuthDelete(unsigned int uid);
 int AuthGet(unsigned int uid, unsigned int *ua_flag, unsigned int *status);
 int QosApply(unsigned int level);
+int QosApplyForOther(unsigned int level, int tid);
 int QosLeave();
 int QosPolicy(struct qos_policy_datas *policy_datas);
 

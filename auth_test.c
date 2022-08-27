@@ -30,7 +30,7 @@ static void test_auth_add()
 	int ret;
 	int i;
 	unsigned int ua_flag = AF_RTG_ALL;
-	unsigned int status = AUTH_STATUS_ENABLE;
+	unsigned int status = AUTH_STATUS_FOREGROUND;
 
 	for (i = 0; i < MAX_TEST_UID_NR; ++i) {
 		ret = AuthEnable(uid_list[i], AF_RTG_ALL, status);
@@ -85,7 +85,7 @@ static void test_auth_pause()
 	int ret;
 	int i;
 	unsigned int ua_flag = AF_RTG_ALL;
-	unsigned int status = AUTH_STATUS_ENABLE;
+	unsigned int status = AUTH_STATUS_FOREGROUND;
 
 	for (i = 0; i < MAX_TEST_UID_NR; ++i) {
 		ret = AuthEnable(uid_list[i], AF_RTG_ALL, status);
@@ -124,7 +124,7 @@ out:
 static inline bool value_changed(unsigned int cur_ua_flag, unsigned cur_status)
 {
 	return cur_ua_flag != AF_RTG_DELEGATED ||
-	       cur_status != AUTH_STATUS_ENABLE;
+	       cur_status != AUTH_STATUS_FOREGROUND;
 }
 
 static void test_auth_get()
@@ -132,7 +132,7 @@ static void test_auth_get()
 	int ret;
 	int i;
 	unsigned int ua_flag = AF_RTG_ALL;
-	unsigned int status = AUTH_STATUS_ENABLE;
+	unsigned int status = AUTH_STATUS_FOREGROUND;
 
 	for (i = 0; i < MAX_TEST_UID_NR; ++i) {
 		ret = AuthEnable(uid_list[i], AF_RTG_ALL, status);

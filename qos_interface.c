@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -5,6 +6,8 @@
 #include <linux/types.h>
 #include <fcntl.h>
 #include <stdbool.h>
+#include <unistd.h>
+#include <sys/syscall.h>
 
 #include "qos_interface.h"
 
@@ -156,6 +159,7 @@ int QosApply(unsigned int level)
 {
 	struct qos_ctrl_data data;
 	int fd;
+
 	int ret;
 
 	fd = trival_open_qos_ctrl_node();
@@ -165,6 +169,9 @@ int QosApply(unsigned int level)
 
 	data.level = level;
 	data.type = 1;
+	data.pid = gettid();
+
+	printf("qos apply for level %d, pid=%d, tid=%d\n", level, gettid(), getpid());
 
 	ret = ioctl(fd, QOS_CTRL_BASIC_OPERATION, &data);
 	if (ret < 0)
@@ -173,6 +180,33 @@ int QosApply(unsigned int level)
 	close(fd);
 	return ret;
 }
+
+int QosApplyForOther(unsigned int level, int tid)
+{
+	struct qos_ctrl_data data;
+	int fd;
+
+	int ret;
+
+	fd = trival_open_qos_ctrl_node();
+	if (fd < 0) {
+		return fd;
+	}
+
+	data.level = level;
+	data.type = 1;
+	data.pid = tid;
+
+	printf("pid=%d apply qos for tid=%d, level %d\n", gettid(), tid, level);
+
+	ret = ioctl(fd, QOS_CTRL_BASIC_OPERATION, &data);
+	if (ret < 0)
+		printf("qos apply failed for task %d\n", tid);
+
+	close(fd);
+	return ret;
+}
+
 
 int QosLeave()
 {
@@ -186,10 +220,13 @@ int QosLeave()
 	}
 
 	data.type = 2;
+	data.pid = gettid();
 
 	ret = ioctl(fd, QOS_CTRL_BASIC_OPERATION, &data);
 	if (ret < 0)
 		printf("qos leave failed for task %d\n", getpid());
+
+	printf("qos leaved\n");
 
 	close(fd);
 	return ret;
@@ -205,7 +242,7 @@ int QosPolicy(struct qos_policy_datas *policy_datas)
 		return fd;
 	}
 
-	ret = ioctl(fd, QOS_CTRL_BASIC_OPERATION, policy_datas);
+	ret = ioctl(fd, QOS_CTRL_POLICY_OPERATION, policy_datas);
 	if (ret < 0)
 		printf("set qos policy failed for task %d\n", getpid());
 
