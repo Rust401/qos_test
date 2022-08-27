@@ -145,6 +145,7 @@ int AuthGet(unsigned int uid, unsigned int *ua_flag, unsigned int *status);
 int QosApply(unsigned int level);
 int QosApplyForOther(unsigned int level, int tid);
 int QosLeave();
+int QosLeaveForOther(int tid);
 int QosPolicy(struct qos_policy_datas *policy_datas);
 
 #endif /* OQS_INTERFACE_H */

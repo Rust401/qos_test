@@ -175,14 +175,6 @@ static void test_multithread_app() {
 		app_swap_to_front(TEST_UID);
 	}
 
-
-	//usleep(5000000);
-	//usleep(FG_BG_SWAP_TIME);
-	//app_swap_to_front(TEST_UID);
-	//usleep(FG_BG_SWAP_TIME);
-
-
-
 	on_app_dead();
 
 	if (success == false) {

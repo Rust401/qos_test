@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -68,6 +69,8 @@ static int set_qos_policy(struct qos_policy_datas *policy_datas)
 void test_qos_polilcy()
 {
 	int ret;
+	int i;
+
 	ret = set_qos_policy(&default_qos_policy);
 	if (ret) {
 		printf("%d set_qos_polilcy failed 1\n", getuid());
@@ -109,35 +112,42 @@ static void qos_policy_test()
 }
 
 
-
+#define APPLY_ITER_NUM 10
 static void test_qos_apply()
 {
 	int ret;
+	int i;
 
-	ret = QosApply(5);
-	if (ret) {
-		printf("uid %d qos apply failed\n", getuid());
-		goto err;
-	}
-	ret = QosApply(4);
-	if (ret) {
-		printf("uid %d qos apply failed\n", getuid());
-		goto err;
-	}
-	ret = QosApply(3);
-	if (ret) {
-		printf("uid %d qos apply failed\n", getuid());
-		goto err;
-	}
-	ret = QosApply(2);
-	if (ret) {
-		printf("uid %d qos apply failed\n", getuid());
-		goto err;
-	}
-	ret = QosApply(1);
-	if (ret) {
-		printf("uid %d qos apply failed\n", getuid());
-		goto err;
+	for (i = 0; i < APPLY_ITER_NUM; ++i) {
+		ret = QosApply(5);
+		if (ret) {
+			printf("tid %d qos apply failed\n", gettid());
+			goto err;
+		}
+
+		ret = QosApply(4);
+		if (ret) {
+			printf("tid %d qos apply failed\n", gettid());
+			goto err;
+		}
+
+		ret = QosApply(3);
+		if (ret) {
+			printf("tid %d qos apply failed\n", gettid());
+			goto err;
+		}
+
+		ret = QosApply(2);
+		if (ret) {
+			printf("tid %d qos apply failed\n", gettid());
+			goto err;
+		}
+
+		ret = QosApply(1);
+		if (ret) {
+			printf("tid %d qos apply failed\n", gettid());
+			goto err;
+		}
 	}
 
 
@@ -156,7 +166,7 @@ void* long_last_child() {
 	while(1);
 }
 
-static void test_qos_apply_for_others()
+static void test_qos_apply_leave_for_same_process()
 {
 	int ret;
 
@@ -170,7 +180,18 @@ static void test_qos_apply_for_others()
 
 	usleep(500000);
 
-	printf("child %d created\n", child_tid);
+
+	ret = QosApplyForOther(4, child_tid);
+	if (ret) {
+		printf("uid %d qos apply failed\n", getuid());
+		goto err;
+	}
+
+	ret = QosApplyForOther(4, child_tid);
+	if (ret) {
+		printf("uid %d qos apply failed\n", getuid());
+		goto err;
+	}
 
 	ret = QosApplyForOther(5, child_tid);
 	if (ret) {
@@ -178,20 +199,88 @@ static void test_qos_apply_for_others()
 		goto err;
 	}
 
-	printf("qos applied for %d\n", child_tid);
+	ret = QosApplyForOther(3, child_tid);
+	if (ret) {
+		printf("uid %d qos apply failed\n", getuid());
+		goto err;
+	}
+
+	ret = QosApplyForOther(5, child_tid);
+	if (ret) {
+		printf("uid %d qos apply failed\n", getuid());
+		goto err;
+	}
 
 	usleep(500000);
 
+	ret = QosLeaveForOther(child_tid);
+	if (ret) {
+		printf("uid %d qos leave failed\n", getuid());
+		goto err;
+	}
 
-	//kill(child_tid, SIGTERM);
+	usleep(500000);
 
-	printf("\033[32m/* -------------- TEST_QOS_APPLY_FOR_OTHER SUCCED!! -------------- */\033[0m\n");
+	ret = pthread_cancel(child);
+	if (ret) {
+		printf("cancel failed %d\n", child_tid);
+		goto err;
+	}
+
+	printf("\033[32m/* -------------- TEST_QOS_APPLY_FOR_SAME_THREAD SUCCED!! -------------- */\033[0m\n");
 	return;
 
 err:
-	printf("\033[31m/* -------------- TEST_QOS_APPLY_FOR_OTHER FAILED!! -------------- */\033[0m\n");
+	printf("\033[31m/* -------------- TEST_QOS_APPLY_FOR_SAME_THREAD FAILED!! -------------- */\033[0m\n");
 	return;
 }
+
+int other_pid = -1;
+
+void process_do_loop()
+{
+	while(1);
+}
+
+static void test_qos_apply_leave_for_other_process()
+{
+	int ret;
+
+	other_pid = fork();
+	if (other_pid < 0)
+		printf("fork fail\n");
+
+	/* child process, do while */
+	if (other_pid == 0)
+		process_do_loop();
+
+	usleep(500000);
+
+	/* father process, the SYSTEM */
+	if (other_pid)
+		ret = QosApplyForOther(4, other_pid);
+
+	if (ret) {
+		printf("apply qos for pid %d (tid)failed\n", other_pid);
+		goto err;
+	}
+
+	usleep(500000);
+
+	ret = QosLeaveForOther(other_pid);
+
+	usleep(500000);
+
+	kill(other_pid, SIGTERM);
+
+	printf("\033[32m/* -------------- TEST_QOS_APPLY_FOR_OTHER_THREAD SUCCED!! -------------- */\033[0m\n");
+	return;
+
+err:
+	printf("\033[31m/* -------------- TEST_QOS_APPLY_FOR_OTHER_THREAD FAILED!! -------------- */\033[0m\n");
+	return;
+}
+
 
 
 static void test_qos_leave()
@@ -214,10 +303,15 @@ err:
 
 static void basic_qos_test()
 {
+	int i;
 	printf("0X01: starut BASIC_QOS_TEST\n");
-	//test_qos_apply();
-	test_qos_apply_for_others();
-	//test_qos_leave();
+
+	test_qos_apply_leave_for_same_process();
+	test_qos_apply_leave_for_other_process();
+
+	test_qos_apply();
+	test_qos_leave();
+
 	printf("finish BASIC_QOS_TEST!\n");
 	printf("\n");
 }
