@@ -19,6 +19,6 @@ int main()
 
 	test_auth_manipulate();
 	test_qos_manipulate();
-	//test_concurrency();
+	test_concurrency();
 }
 

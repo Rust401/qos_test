@@ -75,8 +75,6 @@ static void add_auth_for_start_app(unsigned int uid)
 		printf("add auth for uid %d failed, cur_uid=%d\n", uid, getuid());
 		success = false;
 	}
-
-	printf("add auth success\n");
 }
 
 static void do_app_start()
@@ -84,9 +82,7 @@ static void do_app_start()
 	int i;
 	setuid(TEST_UID);
 
-	perror("start thread\n");
-	for (int i = 0; i < 3; ++i) {
-		perror("start thread\n");
+	for (int i = 0; i < 10; ++i) {
 		int* a = malloc(sizeof(int));
 		*a = i;
 		if (pthread_create(&th[i], NULL, &frameTask, a) != 0) {
@@ -95,9 +91,7 @@ static void do_app_start()
 		}
 	}
 
-	perror("finish thread create\n");
-
-	for (i = 0; i < 3; i++) {
+	for (i = 0; i < 10; i++) {
 		if (pthread_join(th[i], NULL) != 0) {
 			perror("Failed to join thread");
 		}
@@ -143,8 +137,6 @@ void app_swap_to_backgroud(unsigned int uid)
 		printf("auth pause failed\n");
 		success = false;
 	}
-
-	printf("paused\n");
 }
 
 void app_swap_to_front(unsigned int uid)
@@ -156,8 +148,6 @@ void app_swap_to_front(unsigned int uid)
 		printf("auth resume failed\n");
 		success = false;
 	}
-
-	printf("resumed\n");
 }
 
 static void test_multithread_app() {
@@ -169,7 +159,6 @@ static void test_multithread_app() {
 	usleep(5000000);
 
 	while (times--) {
-		printf("loop dude\n");
 		app_swap_to_backgroud(TEST_UID);
 		usleep(FG_BG_SWAP_TIME);
 		app_swap_to_front(TEST_UID);

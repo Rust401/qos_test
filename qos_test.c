@@ -237,14 +237,29 @@ err:
 
 int other_pid = -1;
 
+#define TEST_UID 12345
+
+static void add_auth_for_child_process()
+{
+	int ret;
+
+	ret = AuthEnable(TEST_UID, AF_RTG_ALL, AUTH_STATUS_FOREGROUND);
+	if (ret) {
+		printf("auth status\n");
+	}
+}
+
 void process_do_loop()
 {
+	setuid(TEST_UID);
 	while(1);
 }
 
 static void test_qos_apply_leave_for_other_process()
 {
 	int ret;
+
+	add_auth_for_child_process();
 
 	other_pid = fork();
 	if (other_pid < 0)
@@ -261,7 +276,9 @@ static void test_qos_apply_leave_for_other_process()
 		ret = QosApplyForOther(4, other_pid);
 
 	if (ret) {
-		printf("apply qos for pid %d (tid)failed\n", other_pid);
+		printf("%d(uid %d)apply qos for pid %d (tid)failed\n",
+		        gettid(), getuid(), other_pid);
+		kill(other_pid, SIGTERM);
 		goto err;
 	}
 
@@ -273,11 +290,11 @@ static void test_qos_apply_leave_for_other_process()
 
 	kill(other_pid, SIGTERM);
 
-	printf("\033[32m/* -------------- TEST_QOS_APPLY_FOR_OTHER_THREAD SUCCED!! -------------- */\033[0m\n");
+	printf("\033[32m/* -------------- TEST_QOS_APPLY_FOR_OTHER_PROCESS_THREAD SUCCED!! -------------- */\033[0m\n");
 	return;
 
 err:
-	printf("\033[31m/* -------------- TEST_QOS_APPLY_FOR_OTHER_THREAD FAILED!! -------------- */\033[0m\n");
+	printf("\033[31m/* -------------- TEST_QOS_APPLY_FOR_OTHER_PROCESS_THREAD FAILED!! -------------- */\033[0m\n");
 	return;
 }
 
