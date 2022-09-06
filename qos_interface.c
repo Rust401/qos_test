@@ -85,6 +85,31 @@ int AuthEnable(unsigned int uid, unsigned int ua_flag, unsigned int status)
 	return ret;
 }
 
+
+int AuthSwitch(unsigned int uid, unsigned int rtg_flag, unsigned int qos_flag, unsigned int status)
+{
+	struct auth_ctrl_data data;
+	int fd;
+	int ret;
+
+	fd = trival_open_auth_ctrl_node();
+	if (fd < 0)
+		return fd;
+
+	data.uid = uid;
+	data.rtg_ua_flag = rtg_flag;
+	data.qos_ua_flag = qos_flag;
+	data.status = status;
+	data.type = AUTH_SWITCH;
+
+	ret = ioctl(fd, BASIC_AUTH_CTRL_OPERATION, &data);
+	if (ret < 0)
+		printf("auth switch failed for uid %d with status %d\n", uid, status);
+
+	close(fd);
+	return ret;
+}
+
 int AuthDelete(unsigned int uid)
 {
 	struct auth_ctrl_data data;

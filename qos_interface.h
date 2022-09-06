@@ -24,6 +24,7 @@ enum auth_manipulate_type {
 	AUTH_PAUSE,
 	AUTH_DELETE,
 	AUTH_GET,
+	AUTH_SWITCH,
 	AUTH_MAX_NR,
 };
 
@@ -142,6 +143,7 @@ int AuthEnable(unsigned int uid, unsigned int ua_flag, unsigned int status);
 int AuthPause(unsigned int uid);
 int AuthDelete(unsigned int uid);
 int AuthGet(unsigned int uid, unsigned int *ua_flag, unsigned int *status);
+int AuthSwitch(unsigned int uid, unsigned int rtg_flag, unsigned int qos_flag, unsigned int status);
 int QosApply(unsigned int level);
 int QosApplyForOther(unsigned int level, int tid);
 int QosLeave();

@@ -162,6 +162,57 @@ out:
 	return;
 }
 
+static void test_auth_switch()
+{
+	int ret;
+	int i;
+	unsigned int ua_flag = AF_RTG_ALL;
+	unsigned int qos_flag = AF_QOS_ALL;
+	unsigned int status = AUTH_STATUS_FOREGROUND;
+
+	for (i = 0; i < MAX_TEST_UID_NR; ++i) {
+		ret = AuthEnable(uid_list[i], AF_RTG_ALL, status);
+		if (ret) {
+			printf("add auth for uid %d failed\n", uid_list[i]);
+			goto err;
+		}
+	}
+
+	for (i = 0; i < MAX_TEST_UID_NR; ++i) {
+		ret = AuthSwitch(uid_list[i], AF_RTG_ALL, AF_QOS_ALL, AUTH_STATUS_SYSTEM_SERVER);
+		if (ret) {
+			printf("switch auth for uid %d failed 0\n", uid_list[i]);
+			goto err;
+		}
+	}
+
+	for (i = 0; i < MAX_TEST_UID_NR; ++i) {
+		ret = AuthSwitch(uid_list[i], 0, 0, AUTH_STATUS_BACKGROUND);
+		if (ret) {
+			printf("switch auth for uid %d failed 1\n", uid_list[i]);
+			goto err;
+		}
+	}
+
+	for (i = 0; i < MAX_TEST_UID_NR; ++i) {
+		ret = AuthSwitch(uid_list[i], 2, 2, AUTH_STATUS_FOREGROUND);
+		if (ret) {
+			printf("switch auth for uid %d failed 2\n", uid_list[i]);
+			goto err;
+		}
+	}
+
+	printf("\033[32m/* -------------- TEST_AUTH_SWITCH SUCCED!! -------------- */\033[0m\n");
+	goto out;
+
+err:
+	printf("\033[31m/* -------------- TEST_AUTH_SWTICH FAILED!! -------------- */\033[0m\n");
+out:
+	clean_up_idr();
+	return;
+}
+
+
 static void basic_auth_test()
 {
 	printf("0X00: starut BASIC_AUTH_TEST\n");
@@ -169,6 +220,7 @@ static void basic_auth_test()
 	test_auth_delete();
 	test_auth_pause();
 	test_auth_get();
+	test_auth_switch();
 	printf("finish BASIC_AUTH_TEST!\n");
 	printf("\n");
 }

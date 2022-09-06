@@ -143,9 +143,10 @@ void app_swap_to_front(unsigned int uid)
 {
 	int ret;
 
-	ret = AuthEnable(uid, AF_RTG_ALL, AUTH_STATUS_FOREGROUND);
+	//ret = AuthEnable(uid, AF_RTG_ALL, AUTH_STATUS_FOREGROUND);
+	ret = AuthSwitch(uid, AF_RTG_ALL, AF_QOS_ALL, AUTH_STATUS_FOREGROUND);
 	if (ret) {
-		printf("auth resume failed\n");
+		printf("auth switch resume failed\n");
 		success = false;
 	}
 }
