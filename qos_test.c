@@ -9,49 +9,53 @@
 
 static struct qos_policy_datas default_qos_policy = {
 	.policy_type = QOS_POLICY_DEFAULT,
+	.policy_flag = QOS_FLAG_ALL,
 	.policys = {
-		{0, 0, 0, 1024},
-		{0, 0, 0, 1024},
-		{0, 0, 0, 1024},
-		{0, 0, 0, 1024},
-		{0, 0, 0, 1024},
-		{0, 0, 0, 1024},
+		{0, 0, 0, 1024, 0},
+		{0, 0, 0, 1024, 0},
+		{0, 0, 0, 1024, 0},
+		{0, 0, 0, 1024, 0},
+		{0, 0, 0, 1024, 0},
+		{0, 0, 0, 1024, 0},
 	}
 };
 
 static struct qos_policy_datas foreground_qos_policy = {
 	.policy_type = QOS_POLICY_FRONT,
+	.policy_flag = QOS_FLAG_ALL,
 	.policys = {
-		{0, 0, 0, 1024},
-		{10, 10, 0, 200},
-		{5, 5, 0, 250},
-		{0, 0, 0, 1024},
-		{-5, -5, 300, 1024},
-		{-10, -10, 500, 1024},
+		{0, 0, 0, 1024, 0},
+		{10, 10, 0, 200, 0},
+		{5, 5, 0, 250, 0},
+		{0, 0, 0, 1024, 0},
+		{-5, -5, 300, 1024, 0},
+		{-10, -10, 500, 1024, 2},
 	}
 };
 
 static struct qos_policy_datas background_qos_policy = {
 	.policy_type = QOS_POLICY_BACK,
+	.policy_flag = QOS_FLAG_ALL & ~QOS_FLAG_RT,
 	.policys = {
-		{0, 0, 0, 1024},
-		{15, 15, 0, 150},
-		{10, 10, 0, 200},
-		{5, 5, 0, 250},
-		{0, 0, 0, 300},
-		{-5, -5, 0, 350},
+		{0, 0, 0, 1024, 0},
+		{15, 15, 0, 150, 0},
+		{10, 10, 0, 200, 0},
+		{5, 5, 0, 250, 0},
+		{0, 0, 0, 300, 0},
+		{-5, -5, 0, 350, 3},
 	}
 };
 
 static struct qos_policy_datas system_server_qos_policy = {
 	.policy_type = QOS_POLICY_SYSTEM_SERVER,
+	.policy_flag = QOS_FLAG_ALL,
 	.policys = {
-		{0, 0, 0, 1024},
-		{10, 10, 0, 200},
-		{5, 5, 0, 250},
-		{0, 0, 0, 1024},
-		{-5, -5, 300, 1024},
-		{-10, -10, 500, 1024},
+		{0, 0, 0, 1024, 0},
+		{10, 10, 0, 200, 0},
+		{5, 5, 0, 250, 0},
+		{0, 0, 0, 1024, 0},
+		{-5, -5, 300, 1024, 0},
+		{-10, -10, 500, 1024, 2},
 	}
 };
 

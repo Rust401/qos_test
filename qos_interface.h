@@ -73,6 +73,7 @@ struct qos_policy_data {
 	int latency_nice;
 	int uclamp_min;
 	int uclamp_max;
+	int rt_sched_priority;
 };
 
 enum qos_policy_type {
@@ -83,8 +84,19 @@ enum qos_policy_type {
 	QOS_POLICY_MAX_NR,
 };
 
+#define QOS_FLAG_NICE			0X01
+#define QOS_FLAG_LATENCY_NICE		0X02
+#define QOS_FLAG_UCLAMP			0x04
+#define QOS_FLAG_RT			0x08
+
+#define QOS_FLAG_ALL	(QOS_FLAG_NICE			| \
+			 QOS_FLAG_LATENCY_NICE		| \
+			 QOS_FLAG_UCLAMP		| \
+			 QOS_FLAG_RT)
+
 struct qos_policy_datas {
 	int policy_type;
+	unsigned int policy_flag;
 	struct qos_policy_data policys[NR_QOS + 1];
 };
 
