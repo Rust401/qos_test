@@ -31,7 +31,7 @@ static void do_frame(int runtime)
 	clock_t delta;
 	int cum_run_time;
 
-	ret = QosApply(5);
+	ret = QosApply(4);
 	if (ret) {
 		printf("uid %d qos apply failed\n", getuid());
 		success = false;
@@ -163,6 +163,7 @@ static void test_multithread_app() {
 		app_swap_to_backgroud(TEST_UID);
 		usleep(FG_BG_SWAP_TIME);
 		app_swap_to_front(TEST_UID);
+		usleep(FG_BG_SWAP_TIME);
 	}
 
 	on_app_dead();
