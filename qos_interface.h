@@ -50,7 +50,7 @@ enum auth_ctrl_cmdid {
 /*
  * qos ctrl
  */
-#define NR_QOS 5
+#define NR_QOS 6
 #define QOS_NUM_MAX 10
 
 #define AF_QOS_ALL		0x0003

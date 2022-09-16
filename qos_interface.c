@@ -144,7 +144,10 @@ int AuthPause(unsigned int uid)
 	}
 
 	data.uid = uid;
-	data.type = AUTH_PAUSE;
+	data.type = AUTH_SWITCH;
+	data.rtg_ua_flag = 0;
+	data.qos_ua_flag = AF_QOS_DELEGATED;
+	data.status = AUTH_STATUS_BACKGROUND;
 
 	ret = ioctl(fd, BASIC_AUTH_CTRL_OPERATION, &data);
 	if (ret < 0)

@@ -8,6 +8,7 @@
 extern void test_auth_manipulate();
 extern void test_qos_manipulate();
 extern void test_concurrency();
+extern void test_sched_setattr();
 
 int main()
 {
@@ -20,5 +21,6 @@ int main()
 	test_auth_manipulate();
 	test_qos_manipulate();
 	test_concurrency();
-}
 
+	//test_sched_setattr();
+}

@@ -1,4 +1,4 @@
-TARGET=qos_interface.c main.c auth_test.c qos_test.c concurrency_test.c
+TARGET=qos_interface.c main.c auth_test.c qos_test.c concurrency_test.c test_attr.c
 LEVEL=-O1
 COMPILER_ARM64=aarch64-linux-gnu-gcc
 COMPILER=clang-12
