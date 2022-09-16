@@ -21,7 +21,6 @@ struct auth_ctrl_data {
 
 enum auth_manipulate_type {
 	AUTH_ENABLE = 1,
-	AUTH_PAUSE,
 	AUTH_DELETE,
 	AUTH_GET,
 	AUTH_SWITCH,
@@ -78,9 +77,9 @@ struct qos_policy_data {
 
 enum qos_policy_type {
 	QOS_POLICY_DEFAULT = 1,
+	QOS_POLICY_SYSTEM_SERVER = 2,
 	QOS_POLICY_FRONT,
 	QOS_POLICY_BACK,
-	QOS_POLICY_SYSTEM_SERVER,
 	QOS_POLICY_MAX_NR,
 };
 

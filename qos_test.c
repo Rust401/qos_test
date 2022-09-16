@@ -17,6 +17,7 @@ static struct qos_policy_datas default_qos_policy = {
 		{0, 0, 0, 1024, 0},
 		{0, 0, 0, 1024, 0},
 		{0, 0, 0, 1024, 0},
+		{0, 0, 0, 1024, 0},
 	}
 };
 
@@ -29,6 +30,7 @@ static struct qos_policy_datas foreground_qos_policy = {
 		{5, 5, 0, 250, 0},
 		{0, 0, 0, 1024, 0},
 		{-5, -5, 300, 1024, 0},
+		{-10, -10, 500, 1024, 0},
 		{-10, -10, 500, 1024, 2},
 	}
 };
@@ -42,6 +44,7 @@ static struct qos_policy_datas background_qos_policy = {
 		{10, 10, 0, 200, 0},
 		{5, 5, 0, 250, 0},
 		{0, 0, 0, 300, 0},
+		{-5, -5, 0, 350, 0},
 		{-5, -5, 0, 350, 3},
 	}
 };
@@ -55,6 +58,7 @@ static struct qos_policy_datas system_server_qos_policy = {
 		{5, 5, 0, 250, 0},
 		{0, 0, 0, 1024, 0},
 		{-5, -5, 300, 1024, 0},
+		{-10, -10, 500, 1024, 0},
 		{-10, -10, 500, 1024, 2},
 	}
 };
