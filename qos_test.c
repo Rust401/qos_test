@@ -127,6 +127,12 @@ static void test_qos_apply()
 	int i;
 
 	for (i = 0; i < APPLY_ITER_NUM; ++i) {
+		ret = QosApply(6);
+		if (ret) {
+			printf("tid %d qos apply failed\n", gettid());
+			goto err;
+		}
+
 		ret = QosApply(5);
 		if (ret) {
 			printf("tid %d qos apply failed\n", gettid());
@@ -188,6 +194,11 @@ static void test_qos_apply_leave_for_same_process()
 
 	usleep(500000);
 
+	ret = QosApplyForOther(6, child_tid);
+	if (ret) {
+		printf("uid %d qos apply failed\n", getuid());
+		goto err;
+	}
 
 	ret = QosApplyForOther(4, child_tid);
 	if (ret) {
