@@ -164,7 +164,6 @@ static void test_qos_apply()
 		}
 	}
 
-
 	printf("\033[32m/* -------------- TEST_QOS_APPLY SUCCED!! -------------- */\033[0m\n");
 	return;
 
